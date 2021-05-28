@@ -3,43 +3,31 @@ const env = require('dotenv')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 
+const userRoutes = require('./router/index')
 
 env.config()
 const app = express()
 app.use(bodyParser())
+app.use('/api', userRoutes)
+
 let config = process.env;
 
 // const PORT = 3000;
 
 mongoose
-  .connect(
-    //"mongodb://localhost:27017/test",
-    `mongodb://ecommerce1:ecommerce1@localhost:27018/ecommerce1`,
+  .connect( 
+    `mongodb://${config.MONGO_USER}:${config.MONGO_PASS}@${config.MONGO_HOST}:${config.MONGO_PORT}/${config.MONGO_DB}`,
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      useCreateIndex: true
     }
   )
   .then(() => {
-    console.log(
-      `Database connected:`
-    );
+    console.log(`Database connected:  `);
   });
 
-
-app.get('/', (req, res) => {
-    res.status(200).json({
-        message: "Hello from express"
-    })
-    console.log(res)
-})
-
-app.post('/data', (req, res) => {
-    res.status(200).json({
-        message: req.body
-    })
-})
-
+  
 // app.get
 app.listen(config.PORT, () => {
   console.log(`Server is running on ${config.PORT}`); // awoiding hard-code
